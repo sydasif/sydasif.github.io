@@ -218,4 +218,5 @@ print("Done")
 print()
 ```
 
-> More script at [GitHub](https://github.com/sydasif/network-automation/tree/master/telnet)
+> More script at [GitHub](https://github.com/sydasif/network-automation-script)
+{: .prompt-tip }

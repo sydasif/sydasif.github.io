@@ -13,13 +13,13 @@ toc_sticky: true
 ## Introduction
 GNS3 is used by hundreds of thousands of network engineers worldwide to emulate, configure, test and troubleshoot virtual and real networks. GNS3 allows you to run a small topology consisting of only a few devices on your laptop, to those that have many devices hosted on multiple servers or even hosted in the cloud.
 
-GNS3 is open source, free software that you can download from <http://gns3.com>
+GNS3 is open source, free software that you can download from <https://gns3.com/>
 
 ## Quick Start Requirements
 
-[Install GNS3](https://www.youtube.com/watch?v=Ibe3hgP8gCA&t=4s) if you don't have it and [VMware or virtual box](https://www.youtube.com/watch?v=A0DEnMi09LY&t=11s).
-
-[Cisco Images](https://www.youtube.com/watch?v=jhh2_PP9JLU)
+- [Install GNS3](https://www.youtube.com/watch?v=Ibe3hgP8gCA&t=4s) if you don't have it
+- [Install VMware or VirtualBox](https://www.youtube.com/watch?v=A0DEnMi09LY&t=11s).
+- [Cisco Images](https://www.youtube.com/watch?v=jhh2_PP9JLU)
 
 ### Lab Topology
 
@@ -27,7 +27,7 @@ GNS3 is open source, free software that you can download from <http://gns3.com>
 
 ### Ansible Lab Configuration
 
-In above lab there is an Network-automation node with 02 network interface cards on our network with Ansible already installed. I have to point out that I have removed Ansible in the automation machine and [installed Ansible 2.9.9 with pip3](https://sydasif.github.io/ansible/ansible-basic/), _sshpass_ and changed IP Address configurations as shown below:
+In above lab there is an Network-automation node with 02 network interface cards on our network with Ansible already installed. I have to point out that I have removed Ansible in the automation machine and [installed Ansible 2.9.9 with pip3](/_posts/ansible/2022-06-08-ansible-basic.md), _sshpass_ and changed IP Address configurations as shown below:
 
 ![pic](/assets/images/net_auto.png)
 

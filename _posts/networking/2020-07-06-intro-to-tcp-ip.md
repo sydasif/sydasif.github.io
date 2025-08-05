@@ -18,13 +18,9 @@ For example, voltage and current levels used on a particular cable (UTP, optical
 TCP/IP model layers are below:-
 
 1. Application
-
 2. Transport
-
 3. Network
-
 4. Data Link
-
 5. Physical layer
 
 The TCP/IP model defines common terms and layers used. The bottom layer focuses on how to transmit bits over each individual link.

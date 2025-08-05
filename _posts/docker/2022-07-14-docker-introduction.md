@@ -235,3 +235,4 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
 > We can not mount a volume to an already created/running container.
+{: .prompt-tip }

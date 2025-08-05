@@ -22,6 +22,7 @@ root@ admin-desktop:~#ifconfig tap0 10.10.10.10 netmask 255.255.255.0 up
 ```
 
 > Verify that tap0 is up and given ip is assigned.
+{: .prompt-tip }
 
 ```console
 root@ubuntu:~# ifconfig

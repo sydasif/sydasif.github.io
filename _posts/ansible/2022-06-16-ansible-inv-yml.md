@@ -72,7 +72,7 @@ Lastly, we create variables under the network group with the help of _“vars”
 
 Above is the result of the inventory file in the format of YAML. You can read more [How to build your inventory](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html) on the website.
 
-In [Part 04](https://sydasif.github.io/ansible/ansible-configuration/) we define the location of the inventory in ansible.cfg as named _hosts_ file, now we changed the file name to _hosts.yml_ to use YAML format inventory file.
+In [Part 04](/_posts/ansible/2022-06-15-ansible-configuration.md) we define the location of the inventory in ansible.cfg as named _hosts_ file, now we changed the file name to _hosts.yml_ to use YAML format inventory file.
 
 ```console
 [defaults]

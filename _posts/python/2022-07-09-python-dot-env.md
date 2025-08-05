@@ -89,3 +89,5 @@ A large number of security vulnerabilities can be resolved by taking care of lea
 In case you accidentally exposed your secret/key, do not panic because you can always generate a new key. Also, I would recommend generating new keys before deployment as a safety measure.
 
 > Don't use _USERNAME_ in your environment as a key, it will conflict with your host system and load system username.
+{: .prompt-warning }
+

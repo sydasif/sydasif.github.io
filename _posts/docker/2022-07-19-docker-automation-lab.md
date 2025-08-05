@@ -15,7 +15,7 @@ It was far easier to learn how to use Docker than to dive into all the details o
 
 The subject of this post is building custom containers to leverage some network automation tools like Nornir, Ansible, and Netmiko. Because a lot of these tools are built on Python and meant to run in a Linux environment, you can get into dependency hell very quickly. By isolating your tools in a container, this problem can be circumvented.
 
-The instructions to build a working Docker environment can be found [here](https://sydasif.github.io/docker/docker-introduction/)..
+The instructions to build a working Docker environment can be found [here](/_posts/docker/2022-07-14-docker-introduction.md).
 
 ### Build Your Automation Container
 
@@ -230,7 +230,7 @@ docker0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group
     inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
 ```
 
-If you want to learn more about how Docker network is working see [Part-02](https://sydasif.github.io/docker/docker-networking-lab/).
+If you want to learn more about how Docker network is working see [Part-02](/_posts/docker/2022-07-16-docker-networking-lab.md).
 
 ### Testing Python script
 

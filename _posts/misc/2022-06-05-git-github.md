@@ -414,6 +414,5 @@ git remote remove origin
 
 #### External Links
 
-[FancyGit](https://github.com/diogocavilha/fancy-git)
-
-[Using Git with VSCode](https://www.youtube.com/watch?v=i_23KUAEtUM&t=168s)
+- [FancyGit](https://github.com/diogocavilha/fancy-git)
+- [Using Git with VSCode](https://www.youtube.com/watch?v=i_23KUAEtUM&t=168s)
