@@ -14,9 +14,9 @@ timezone: Asia/Karachi
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Net-Automate # the main title
+title: Network-Automate # the main title
 
-tagline: Automate Network with Code # it will display as the subtitle
+tagline: Automate Networks with Code # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
   Technical blog focusing on Network Automation, Ansible, Docker, Linux, Python, and DevOps practices for network engineers.
@@ -108,26 +108,17 @@ social_preview_image: # string, local or CORS resources
 toc: true
 
 comments:
-  # Global switch for the post-comment system. Keeping it empty means disabled.
-  provider: disqus # [disqus | utterances | giscus]
-  # The provider options are as follows:
-  disqus:
-    shortname: Syed # fill with the Disqus shortname. › https://help.disqus.com/en/articles/1717111-what-s-a-shortname
-  # utterances settings › https://utteranc.es/
-  utterances:
-    repo: # <gh-username>/<repo>
-    issue_term: # < url | pathname | title | ...>
-  # Giscus options › https://giscus.app
+  provider: giscus
   giscus:
-    repo: # <gh-username>/<repo>
-    repo_id:
-    category:
-    category_id:
-    mapping: # optional, default to 'pathname'
-    strict: # optional, default to '0'
-    input_position: # optional, default to 'bottom'
-    lang: # optional, default to the value of `site.lang`
-    reactions_enabled: # optional, default to the value of `1`
+    repo: sydasif/sydasif.github.io
+    repo_id: R_kgDOPYbOcw
+    category: General
+    category_id: DIC_kwDOPYbOc84Ctz6b
+    mapping: pathname
+    strict: 0
+    reactions_enabled: 1
+    input_position: bottom
+    lang: en
 
 # Self-hosted static assets, optional › https://github.com/cotes2020/chirpy-static-assets
 assets:
