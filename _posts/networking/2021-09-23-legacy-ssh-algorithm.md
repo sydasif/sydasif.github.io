@@ -13,7 +13,7 @@ toc_sticky: true
 ## Legacy SSH Algorithm and Cipher in Cisco Device's
 In this blog, I'm showing you how to enable the legacy SSH algorithm and cipher option on your machine.
 
-I, encounter this issue so many times whenever setting lab environment for testing. I'm using [Windows 10 and Microsoft loopback adaptor to connect with devices in GNS3]({% post_url networking/connect-host-pc-with-gns3 %}), but this process is also working on any other setup or any Linux OS.
+I, encounter this issue so many times whenever setting lab environment for testing. I'm using Windows 10 and Microsoft loopback adaptor to connect with devices in GNS3, but this process is also working on any other setup or any Linux OS.
 
 Lab Topology used in this setup as shown below:
 
