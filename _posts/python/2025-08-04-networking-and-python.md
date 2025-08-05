@@ -1,5 +1,4 @@
 ---
-layout: single
 title:  "Getting Started with Networking and Python"
 date:   2025-08-04 12:00:15 +0500
 categories: python
