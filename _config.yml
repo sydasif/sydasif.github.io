@@ -14,9 +14,9 @@ timezone: Asia/Karachi
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Network Technician # the main title
+title: Net-Automate # the main title
 
-tagline: Network Automation and DevOps # it will display as the subtitle
+tagline: Automate Network with Code # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
   Technical blog focusing on Network Automation, Ansible, Docker, Linux, Python, and DevOps practices for network engineers.
