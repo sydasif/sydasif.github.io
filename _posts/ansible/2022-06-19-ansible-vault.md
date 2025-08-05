@@ -5,9 +5,6 @@ categories: ansible
 tags:
   - automation
   - yaml
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
 ---
 
 ## [Protecting sensitive variables with vault](https://docs.ansible.com/ansible/latest/network/getting_started/first_inventory.html#protecting-sensitive-variables-with-ansible-vault)

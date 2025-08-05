@@ -2,10 +2,8 @@
 title:  "Python: Reading and Writing Files"
 date:   2021-12-18 15:02:15 +0500
 categories: python
-tag: python
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
+tags:
+  - python3
 ---
 
 ## Reading and Writing Files

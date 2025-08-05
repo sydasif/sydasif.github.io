@@ -2,10 +2,8 @@
 title:  "Linux Networking Commands"
 date:   2021-09-04 15:02:15 +0500
 categories: linux
-tag: networking
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
+tags:
+  - commands
 ---
 
 ## Linux Networking Commands

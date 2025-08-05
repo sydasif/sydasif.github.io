@@ -5,9 +5,6 @@ categories: ansible
 tags:
   - automation
   - gns3
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
 ---
 
 ## Introduction

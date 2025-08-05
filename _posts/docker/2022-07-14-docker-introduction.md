@@ -4,9 +4,6 @@ date:   2022-07-14 11:02:15 +0500
 categories: docker
 tags:
   - automation
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
 ---
 
 ## What is Docker?

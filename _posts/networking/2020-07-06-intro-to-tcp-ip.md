@@ -2,10 +2,9 @@
 title:  "Introduction to TCP/IP Networking"
 date:   2020-07-06 15:02:15 +0500
 categories: networking
-tag: networking
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
+tags:
+  - tcp-ip
+  - networking
 ---
 
 ## TCP/IP Networking Model

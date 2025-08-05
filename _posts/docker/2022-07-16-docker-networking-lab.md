@@ -3,11 +3,8 @@ title:  "Part 02: Docker for Network Automation"
 date:   2022-07-16 07:54:00 +0500
 categories: docker
 tags:
-  - python
+  - python3
   - automation
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
 ---
 
 ## Docker networking  overview lab

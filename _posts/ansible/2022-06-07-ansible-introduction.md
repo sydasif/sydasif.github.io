@@ -3,10 +3,7 @@ title:  "Part 01: Ansible for Network Automation"
 date:   2022-06-07 15:14:00 +0500
 categories: ansible
 tags:
-  - ansible
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
+  - automation
 ---
 
 ## What is Ansible?

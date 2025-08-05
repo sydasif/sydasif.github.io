@@ -2,10 +2,8 @@
 title:  "Python: How to use python-dotenv"
 date:   2022-07-09 12:08:00 +0500
 categories: python
-tag: python
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
+tags:
+  - python3
 ---
 
 ## Python-dotenv (Keep your secrets safe)
@@ -90,4 +88,3 @@ In case you accidentally exposed your secret/key, do not panic because you can a
 
 > Don't use _USERNAME_ in your environment as a key, it will conflict with your host system and load system username.
 {: .prompt-warning }
-

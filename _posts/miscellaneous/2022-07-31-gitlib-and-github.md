@@ -1,11 +1,9 @@
 ---
 title:  "Manage GitHub and Gitlab accounts on a single machine"
 date:   2022-07-31 18:20:15 +0500
-categories: misc
-tag: git
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
+categories: miscellaneous
+tags:
+  - git
 ---
 
 ## Manage GitHub and Gitlab accounts on a single machine with SSH keys on Linux

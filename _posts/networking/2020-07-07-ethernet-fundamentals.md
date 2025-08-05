@@ -2,10 +2,9 @@
 title:  "Ethernet Fundamentals"
 date:   2020-07-07 15:02:15 +0500
 categories: networking
-tag: networking
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
+tags:
+  - ethernet
+  - networking
 ---
 
 ## Overview of LANs
@@ -36,4 +35,3 @@ While the physical layer standards emphasize sending bits in form of electrical 
 Ethernet LAN is a combination of user devices, LAN switches, and different kinds of cabling. Each link can use different types of cables, at different speeds.
 
 They all work together to deliver Ethernet frames from the one device on the LAN to some other device.
-

@@ -1,13 +1,10 @@
 ---
-title:  "SSH: Unable to Negotiate Error"
+title:  "SSH Error - Unable to Negotiate Legacy Algorithm and Cipher"
 date:   2021-09-23 11:50:00 +0500
 categories: networking
 tags:
-  - cisco
   - gns3
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
+  - networking
 ---
 
 ## Legacy SSH Algorithm and Cipher in Cisco Device's

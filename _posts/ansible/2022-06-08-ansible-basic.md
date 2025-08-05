@@ -1,11 +1,9 @@
 ---
-title: "Part 02: Getting Started with Ansible"
-date: 2022-06-08 08:14:00 +0500
+title:  "Part 02: Getting Started with Ansible"
+date:   2022-06-08 08:14:00 +0500
 categories: ansible
-tag: ansible
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
+tags:
+  - automation
 ---
 
 ## Ansible Basic and Installation

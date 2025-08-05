@@ -5,9 +5,6 @@ categories: ansible
 tags:
   - automation
   - gns3
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
 ---
 
 ## [Ansible Configuration and Creating Inventory File](https://docs.ansible.com/ansible/latest/installation_guide/intro_configuration.html#configuring-ansible)

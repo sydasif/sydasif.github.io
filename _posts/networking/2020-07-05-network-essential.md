@@ -2,10 +2,8 @@
 title:  "Networking Essential"
 date:   2020-07-05 15:02:15 +0500
 categories: networking
-tag: networking
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
+tags:
+  - networking
 ---
 
 ## What is a network?

@@ -5,9 +5,6 @@ categories: ansible
 tags:
   - automation
   - yaml
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
 ---
 
 ## Ansible Inventory YAML Format

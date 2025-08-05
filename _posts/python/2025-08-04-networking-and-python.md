@@ -1,11 +1,11 @@
 ---
 title:  "Getting Started with Networking and Python"
 date:   2025-08-04 12:00:15 +0500
-categories: python
-tag: networking, python
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
+categories:
+  - python
+tags:
+  - python3
+  - networking
 ---
 
 ## Networking and Python

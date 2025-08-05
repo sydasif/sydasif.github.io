@@ -1,11 +1,9 @@
 ---
 title:  "Getting Started with Git and GitHub"
 date:   2022-06-05 15:02:15 +0500
-categories: misc
-tag: git
-toc: true
-toc_label: "On This Post"
-toc_sticky: true
+categories: miscellaneous
+tags:
+  - git
 ---
 
 ## What is Git?
