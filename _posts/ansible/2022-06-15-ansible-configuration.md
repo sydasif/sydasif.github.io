@@ -1,10 +1,15 @@
 ---
-title:  "Part 04: Ansible Configuration and Inventory Setting"
+title:  "Ansible Configuration and Inventory Setup: A Comprehensive Guide"
 date:   2022-06-15 14:05:00 +0500
 categories: ansible
+description: "Learn how to configure Ansible and set up an inventory file for network automation. This guide covers the ansible.cfg file, inventory formats, and best practices."
 tags:
-  - automation
-  - gns3
+  - ansible
+  - configuration
+  - inventory
+  - network automation
+  - ansible.cfg
+  - hosts file
 ---
 
 ## [Ansible Configuration and Creating Inventory File](https://docs.ansible.com/ansible/latest/installation_guide/intro_configuration.html#configuring-ansible)

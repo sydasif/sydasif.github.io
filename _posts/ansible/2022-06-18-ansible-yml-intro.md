@@ -1,10 +1,15 @@
 ---
-title:  "Part 07: Ansible and YAML"
+title:  "Ansible and YAML: A Comprehensive Introduction"
 date:   2022-06-18 09:55:00 +0500
 categories: ansible
+description: "Learn the basics of YAML syntax and how it's used in Ansible playbooks. This guide covers YAML data types, rules, and best practices for writing effective Ansible configurations."
 tags:
-  - automation
+  - ansible
   - yaml
+  - playbooks
+  - configuration
+  - automation
+  - syntax
 ---
 
 ## YAML Introduction

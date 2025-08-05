@@ -1,10 +1,15 @@
 ---
-title:  "Part 05: Ansible YAML Inventory Setting"
+title:  "Ansible YAML Inventory: Configuration and Examples"
 date:   2022-06-16 09:55:00 +0500
 categories: ansible
+description: "Learn how to configure Ansible inventories using YAML files. This guide covers essential keys, default groups, and practical examples for network automation."
 tags:
-  - automation
+  - ansible
   - yaml
+  - inventory
+  - network automation
+  - configuration
+  - hosts.yml
 ---
 
 ## Ansible Inventory YAML Format

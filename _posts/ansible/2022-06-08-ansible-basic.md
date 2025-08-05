@@ -1,9 +1,14 @@
 ---
-title:  "Part 02: Getting Started with Ansible"
+title:  "Ansible Basics: Installation and Configuration"
 date:   2022-06-08 08:14:00 +0500
 categories: ansible
+description: "Learn how to install and configure Ansible for network automation. This guide covers basic concepts, installation steps, and essential components."
 tags:
+  - ansible
   - automation
+  - installation
+  - configuration
+  - network automation
 ---
 
 ## Ansible Basic and Installation

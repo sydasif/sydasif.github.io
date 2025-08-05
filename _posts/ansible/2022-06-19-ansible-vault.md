@@ -1,10 +1,16 @@
 ---
-title:  "Part 08: Ansible and ansible-vault"
+title:  "Protecting Sensitive Data with Ansible Vault: A Practical Guide"
 date:   2022-06-19 09:55:00 +0500
 categories: ansible
+description: "Learn how to use Ansible Vault to encrypt sensitive data, such as passwords and API keys, in your Ansible playbooks and inventory files. This guide provides practical examples and best practices for securing your Ansible deployments."
 tags:
-  - automation
-  - yaml
+  - ansible
+  - vault
+  - encryption
+  - security
+  - network automation
+  - passwords
+  - ansible-vault
 ---
 
 ## [Protecting sensitive variables with vault](https://docs.ansible.com/ansible/latest/network/getting_started/first_inventory.html#protecting-sensitive-variables-with-ansible-vault)

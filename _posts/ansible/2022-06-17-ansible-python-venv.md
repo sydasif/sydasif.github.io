@@ -1,10 +1,15 @@
 ---
-title:  "Part 06: Ansible Multi version Installation"
+title:  "Installing Multiple Ansible Versions Using Python Virtual Environments"
 date:   2022-06-17 09:55:00 +0500
 categories: ansible
+description: "Learn how to install and manage multiple Ansible versions on a single control node using Python virtual environments (venv). This guide covers the steps to create and activate virtual environments for different Ansible versions."
 tags:
-  - automation
-  - python3
+  - ansible
+  - python
+  - venv
+  - virtual environment
+  - multi-version
+  - network automation
 ---
 
 ## Ansible and Python3 venv module

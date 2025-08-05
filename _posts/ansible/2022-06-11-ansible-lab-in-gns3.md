@@ -1,10 +1,15 @@
 ---
-title:  "Part 03: Ansible Automation Lab Setup with GNS3"
+title:  "Setting up an Ansible Automation Lab with GNS3"
 date:   2022-06-11 08:14:00 +0500
 categories: ansible
+description: "A step-by-step guide to setting up an Ansible automation lab using GNS3. Learn how to configure network devices and test Ansible playbooks in a virtual environment."
 tags:
+  - ansible
   - automation
   - gns3
+  - lab setup
+  - network automation
+  - virtual environment
 ---
 
 ## Introduction
