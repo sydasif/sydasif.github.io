@@ -4,6 +4,7 @@ date:   2022-06-05 15:02:15 +0500
 categories: miscellaneous
 tags:
   - git
+  - github
 ---
 
 ## What is Git?

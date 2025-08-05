@@ -5,6 +5,7 @@ categories: networking
 tags:
   - gns3
   - networking
+  - ssh
 ---
 
 ## Legacy SSH Algorithm and Cipher in Cisco Device's

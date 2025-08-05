@@ -4,7 +4,8 @@ date:   2022-07-16 07:54:00 +0500
 categories: docker
 tags:
   - python3
-  - automation
+  - network automation
+  - docker
 ---
 
 ## Docker networking  overview lab

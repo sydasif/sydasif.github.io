@@ -4,6 +4,7 @@ date:   2021-09-04 15:02:15 +0500
 categories: linux
 tags:
   - commands
+  - linux bash
 ---
 
 ## Linux Networking Commands

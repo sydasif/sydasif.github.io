@@ -5,6 +5,7 @@ categories: linux
 tags:
   - gns3
   - lab
+  - linux bash
 ---
 
 ## How to install a tap0 interface in Linux for GNS3

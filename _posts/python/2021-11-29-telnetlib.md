@@ -3,9 +3,10 @@ title:  "Python: Network Automation with Telnetlib"
 date:   2021-11-29 15:02:15 +0500
 categories: python
 tags:
-  - automation
+  - network automation
   - gns3
   - python3
+  - telnetlib
 ---
 
 ## What is Network Automation?

@@ -1,9 +1,13 @@
 ---
-title:  "Part 01: Ansible for Network Automation"
+title:  "Ansible for Network Automation"
 date:   2022-06-07 15:14:00 +0500
 categories: ansible
 tags:
+  - ansible
   - automation
+  - installation
+  - configuration
+  - network automation
 ---
 
 ## What is Ansible?

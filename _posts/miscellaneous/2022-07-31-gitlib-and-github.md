@@ -4,6 +4,8 @@ date:   2022-07-31 18:20:15 +0500
 categories: miscellaneous
 tags:
   - git
+  - github
+  - gitlab
 ---
 
 ## Manage GitHub and Gitlab accounts on a single machine with SSH keys on Linux

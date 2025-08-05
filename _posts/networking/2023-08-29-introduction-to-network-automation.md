@@ -4,8 +4,8 @@ date: 2023-08-29 07:04:08 +0500
 categories: networking
 tags:
   - python
-  - automation
-  - network-automation
+  - network automation
+  - networking
 ---
 
 ## Introduction to Network Automation

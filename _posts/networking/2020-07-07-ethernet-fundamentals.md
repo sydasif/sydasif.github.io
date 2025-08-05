@@ -3,7 +3,7 @@ title:  "Ethernet Fundamentals"
 date:   2020-07-07 15:02:15 +0500
 categories: networking
 tags:
-  - ethernet
+  - ethernet fundamentals
   - networking
 ---
 

@@ -3,7 +3,8 @@ title:  "Part 01: Docker for Network Automation"
 date:   2022-07-14 11:02:15 +0500
 categories: docker
 tags:
-  - automation
+  - network automation
+  - docker
 ---
 
 ## What is Docker?

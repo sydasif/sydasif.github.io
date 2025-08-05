@@ -4,7 +4,8 @@ date:   2022-07-19 11:02:15 +0500
 categories: docker
 tags:
   - python3
-  - automation
+  - network automation
+  - docker
 ---
 
 ## Automation with Docker
