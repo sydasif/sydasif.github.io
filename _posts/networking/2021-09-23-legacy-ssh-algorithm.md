@@ -15,7 +15,7 @@ I, encounter this issue so many times whenever setting lab environment for testi
 
 Lab Topology used in this setup as shown below:
 
-![lab-layout](/assets/images/ssh_issu_lab.png)
+![lab-layout](/assets/img/ssh_issu_lab.png)
 
 First, configure devices for SSH and assigned IP addresses as per your lab environment. When I, SSH into a device found the below error:
 

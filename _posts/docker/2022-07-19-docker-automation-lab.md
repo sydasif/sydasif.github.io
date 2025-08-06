@@ -177,16 +177,16 @@ In this section, we will connect our container to a network in GNS3 to test our 
 
 We will create simple network topology in GNS3 as below:
 
-![LAb TOPOLOGY](/assets/images/docker.png)
+![LAb TOPOLOGY](/assets/img/docker.png)
 
 1. Open GNS3 and add a cisco router and switch.
 2. Add cloud to your topology, but make sure to chose your host server, not GNS3VM as below:
 
-![PIC](/assets/images/ubuntu.png)
+![PIC](/assets/img/ubuntu.png)
 
 After that, double click on cloud node to configure docker0 interface:
 
-![PIC](/assets/images/docker0.png)
+![PIC](/assets/img/docker0.png)
 
 In above configuration tab check _show special ethernet interface_, select docker0 from dropdown menu click add, apply and ok.
 

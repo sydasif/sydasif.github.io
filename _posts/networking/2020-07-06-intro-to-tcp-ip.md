@@ -52,7 +52,7 @@ A five-step process by which a TCP/IP host sends data as mention below:-
 
 5. Transmit the bits. The physical layer encodes a signal onto the medium to transmit the frame.
 
-![pic](/assets/images/Data_encap.PNG)
+![pic](/assets/img/Data_encap.PNG)
 
 In networking, terms are used like segment, packet, and frame. Each term has a particular meaning, referring to the headers (trailers) defined by a particular layer and the data encapsulated following by that header.
 

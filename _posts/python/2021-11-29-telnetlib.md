@@ -14,13 +14,13 @@ Network automation is the process of automating the configuration, management an
 
 In this blog, we are going to set up Network Automation hands-on lab for Python in GNS3. Create the simple topology as the figure below:
 
-![picture](/assets/images/network_automation.png)
+![picture](/assets/img/network_automation.png)
 
 ### NetworkAutomation-1 Configuration
 
 First, Aad two interface as below:
 
-![pic](/assets/images/net_auto.png)
+![pic](/assets/img/net_auto.png)
 
 Open console connection of container and type command `nano /etc/network/interfaces` and configure as below:
 

@@ -25,13 +25,13 @@ GNS3 is open source, free software that you can download from <https://gns3.com/
 
 ### Lab Topology
 
-![layout](/assets/images/lab-topology-01.png)
+![layout](/assets/img/lab-topology-01.png)
 
 ### Ansible Lab Configuration
 
 In above lab there is an Network-automation node with 02 network interface cards on our network with Ansible already installed. I have to point out that I have removed Ansible in the automation machine and [installed Ansible 2.9.9 with pip3]({% post_url ansible/2022-06-08-ansible-basic %}), _sshpass_ and changed IP Address configurations as shown below:
 
-![pic](/assets/images/net_auto.png)
+![pic](/assets/img/net_auto.png)
 
 ```console
 # Static config for eth0
