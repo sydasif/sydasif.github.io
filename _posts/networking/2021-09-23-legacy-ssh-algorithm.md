@@ -5,7 +5,17 @@ categories: networking
 tags:
   - gns3
   - networking
-  - ssh
+  - SSH
+  - legacy algorithm
+  - legacy cipher
+  - cisco
+  - Windows
+  - Linux
+  - troubleshooting
+  - network devices
+  - network protocols
+  - SSH configuration
+  - SSH troubleshooting
 ---
 
 ## Legacy SSH Algorithm and Cipher in Cisco Device's
