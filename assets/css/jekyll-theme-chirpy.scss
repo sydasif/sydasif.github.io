@@ -17,13 +17,3 @@ blockquote {
   color: #6c7983; /* Slightly muted text color for blockquotes */
   font-style: italic; /* Italicize the quoted text */
 }
-
-a {
-  color: #3e5c7c; /* Primary blue for links */
-  transition: color 0.3s ease-in-out; /* Smooth transition for color change */
-}
-
-a:hover {
-  color: #64778b; /* Darker blue on hover */
-  text-decoration: underline; /* Underline on hover for clarity */
-}
