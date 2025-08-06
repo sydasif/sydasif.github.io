@@ -22,7 +22,7 @@ In essence, network automation empowers IT professionals and organizations to wo
 - **Provisioning:** Quickly set up and configure devices with minimal error.
 - **Security:** Enforce security policies automatically across your infrastructure.
 
-## Python and Its Role in Network Automation
+## [Python and Its Role in Network Automation]({% post_url python/2025-08-04-networking-and-python %})
 
 Python, created by Guido van Rossum, has emerged as the preferred scripting language for network engineers. It’s easy to learn and offers powerful capabilities with clean syntax, high-level data structures, and object-oriented features.
 

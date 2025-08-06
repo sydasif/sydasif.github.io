@@ -6,6 +6,9 @@ categories:
 tags:
   - python3
   - networking
+  - network automation
+  - network programming
+  - python libraries
 ---
 
 ## Networking and Python
@@ -62,53 +65,9 @@ Before diving into networking, it's essential to grasp some basic Python concept
 
 Automation is one of the most significant benefits of using Python in networking. By writing scripts to automate repetitive tasks, you can save time and reduce the risk of human error.
 
-#### Example: Automating Configuration Backups
-
-Here's a simple example of how you can use Python to automate the backup of network device configurations using SSH:
-
-```python
-import paramiko
-
-def backup_config(hostname, username, password, filename):
-    ssh_client = paramiko.SSHClient()
-    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh_client.connect(hostname, username=username, password=password)
-    stdin, stdout, stderr = ssh_client.exec_command('show running-config')
-    with open(filename, 'w') as file:
-        file.write(stdout.read().decode())
-    ssh_client.close()
-
-backup_config('192.168.1.1', 'admin', 'securepassword', 'backup.txt')
-````
-
 ### Monitoring Network Performance
 
 Python scripts can be used to monitor network performance by collecting and analyzing data from network devices. This can help you identify potential issues and ensure optimal network performance.
-
-#### Example: Monitoring Interface Statistics with SNMP
-
-Here's an example of how you can use Python to retrieve interface statistics from a network device using SNMP:
-
-```python
-from pysnmp.hlapi import *
-
-def get_interface_stats(hostname, community):
-    error_indication, error_status, error_index, var_binds = next(
-        getCmd(SnmpEngine(),
-               CommunityData(community),
-               UdpTransportTarget((hostname, 161)),
-               ContextData(),
-               ObjectType(ObjectIdentity('IF-MIB', 'ifInOctets', 1)))
-    )
-
-    if error_indication:
-        print(error_indication)
-    else:
-        for var_bind in var_binds:
-            print(' = '.join([str(x) for x in var_bind]))
-
-get_interface_stats('192.168.1.1', 'public')
-```
 
 ## Best Practices and Security Considerations
 

@@ -21,7 +21,7 @@ tags:
 ## Interactions with Python
 In network engineering, the ability to interact with network devices programmatically is invaluable. Python, with its simplicity and powerful libraries, is an excellent tool for automating and managing network tasks. This post will guide you through using Python for low-level network device interactions using protocols like SSH, Telnet, and SNMP.
 
-## The Importance of Network Automation
+## [The Importance of Network Automation]({% post_url networking/2023-08-29-network-automation %})
 
 ### Why Automate?
 
@@ -43,7 +43,7 @@ Secure Shell (SSH) is a protocol used to securely access network devices. It pro
 
 Paramiko is a Python library that implements the SSHv2 protocol, providing both client and server functionality. It's a popular choice for SSH interactions in Python due to its ease of use and wide feature set.
 
-##### Basic Usage
+##### [Basic Usage]({% post_url python/2021-12-14-paramiko %})
 
 Here's a simple example of how to use Paramiko to connect to a network device and execute a command:
 
@@ -65,7 +65,7 @@ print(stdout.read().decode())
 ssh_client.close()
 ```
 
-##### More Usage
+##### [More Usage](https://github.com/sydasif/network-automation-script)
 
 Paramiko can also be used for tasks like transferring files using SFTP (SSH File Transfer Protocol):
 
@@ -103,7 +103,7 @@ Telnet is an older protocol used for remote access to network devices. Unlike SS
 
 Telnetlib is a Python module that provides a Telnet client class. It's part of the Python standard library, making it easy to use right away.
 
-##### Basic Usage
+##### [Basic Usage]({% post_url python/2021-11-29-telnetlib %})
 
 Here's a simple example of how to use Telnetlib to connect to a network device and execute a command:
 
@@ -127,7 +127,7 @@ print(tn.read_all().decode())
 tn.close()
 ```
 
-##### More Usage
+##### [More Usage](https://github.com/sydasif/network-automation-script)
 
 Telnetlib can also be used for tasks like handling timeouts and errors:
 
