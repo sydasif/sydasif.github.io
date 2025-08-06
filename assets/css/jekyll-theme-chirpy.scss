@@ -1,0 +1,39 @@
+---
+---
+
+/* prettier-ignore */
+@use 'main
+{%- if jekyll.environment == 'production' -%}
+  .bundle
+{%- endif -%}
+';
+
+/* append your custom style below */
+
+body {
+  font-size: 1.1em; /* Slightly larger base font size */
+  line-height: 1.5; /* Increased line height for better readability */
+  color: #343a40; /* Dark gray for main text */
+}
+
+p {
+  margin-bottom: 1em; /* Consistent spacing between paragraphs */
+}
+
+blockquote {
+  border-left: 4px solid #6c757d; /* Secondary color for blockquote border */
+  margin: 1.5em 10px; /* Spacing around the blockquote */
+  padding: 0.5em 10px; /* Padding inside the blockquote */
+  color: #6c7983; /* Slightly muted text color for blockquotes */
+  font-style: italic; /* Italicize the quoted text */
+}
+
+a {
+  color: #3e5c7c; /* Primary blue for links */
+  transition: color 0.3s ease-in-out; /* Smooth transition for color change */
+}
+
+a:hover {
+  color: #64778b; /* Darker blue on hover */
+  text-decoration: underline; /* Underline on hover for clarity */
+}
