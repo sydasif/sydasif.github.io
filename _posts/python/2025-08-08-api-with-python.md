@@ -5,14 +5,16 @@ categories:
   - python
   - networking
 tags:
-  - python3 automation
-  - Network configuration
+  - python3
+  - cisco
+  - csr1000v
+  - restconf
+  - network APIs
+  - containerlab
   - network automation
   - network devices
   - network protocols
-  - restconf
   - network management
-  - network APIs
   - network monitoring
 ---
 
@@ -144,7 +146,7 @@ If successful, you should see a JSON list of interfaces:
 }
 ```
 
-### Fetch Data with Python
+### 2. Fetch Data with Python
 
 Here’s a simple Python script using the requests library:
 
@@ -188,7 +190,11 @@ else:
                 'type': 'iana-if-type:ethernetCsmacd'}]}
 ```
 
-Python makes it easy to automate these API calls. Using the `requests` library:
+Python makes it easy to automate these API calls. Using the `requests` library.
+
+### 3. Configure an Interface via RESTCONF
+
+Now let’s configure a loopback interface using RESTCONF. This example shows how to build a JSON payload and send it to the device.
 
 ```python
 import json
@@ -246,6 +252,12 @@ else:
     print(f"❌ Failed with status code {response.status_code}")
     print(response.text)
 ```
+
+```
+✅ Interface Loopback0 configured successfully.
+```
+
+This script builds a JSON payload for a loopback interface and sends it to the CSR1000v device. On success, it will create the interface with the specified IP address and netmask.
 
 ## Best Practices for API-Based Automation
 
