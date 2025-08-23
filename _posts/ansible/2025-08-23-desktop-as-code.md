@@ -8,7 +8,6 @@ tags:
   - installation
   - configuration
   - network automation
-image: https://www.learnlinux.tv/wp-content/uploads/2020/12/ansible-e1607524003363.png
 ---
 
 ## Introduction
