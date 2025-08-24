@@ -103,7 +103,7 @@ zolo ALL=(ALL) NOPASSWD: ALL
 
 ## Installing Ansible
 
-For detailed instructions on installing Ansible, refer to the [Ansible Installation](ansible-installation.md) guide, which covers both `apt` and `pip` methods.
+For detailed instructions on installing Ansible, refer to the [Ansible Installation]({% post_url ansible/ansible-installation %}) guide, which covers both `apt` and `pip` methods.
 
 ---
 
