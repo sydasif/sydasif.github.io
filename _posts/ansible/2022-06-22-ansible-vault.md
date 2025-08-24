@@ -1,6 +1,6 @@
 ---
 title:  "Protecting Sensitive Data with Ansible Vault: A Practical Guide"
-date:   2022-06-19 09:55:00 +0500
+date:   2022-06-22 09:55:00 +0500
 categories: ansible
 description: "Learn how to use Ansible Vault to encrypt sensitive data, such as passwords and API keys, in your Ansible playbooks and inventory files. This guide provides practical examples and best practices for securing your Ansible deployments."
 tags:
