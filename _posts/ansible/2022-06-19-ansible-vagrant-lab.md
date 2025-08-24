@@ -116,7 +116,7 @@ Once your Vagrant VMs are up and running, you need to configure them to be manag
 
 ---
 
-With your Vagrant lab set up and managed nodes configured for passwordless SSH and sudo, you are ready to install Ansible on your control node and start automating! Refer to the [Ansible Installation]({% post_url ansible/ansible-installation %}) guide for the next steps.
+With your Vagrant lab set up and managed nodes configured for passwordless SSH and sudo, you are ready to install Ansible on your control node and start automating! Refer to the [Ansible Installation]({% post_url ansible/2022-06-08-ansible-installation %}) guide for the next steps.
 
 ## Configuring Ansible Inventory
 
