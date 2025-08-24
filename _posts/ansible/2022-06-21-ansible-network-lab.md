@@ -76,7 +76,7 @@ Connection to 172.16.10.11 closed.
 
 ### Run Your First Network Command (Ad-Hoc)
 
-Instead of manually connecting and running a command on the network device, you can retrieve its configuration with a single, stripped-down Ansible command. For more details on ad-hoc commands, refer to the [Ad-Hoc Commands](./ansible-ad-hoc.md) guide.
+Instead of manually connecting and running a command on the network device, you can retrieve its configuration with a single, stripped-down Ansible command. For more details on ad-hoc commands, refer to the [Ad-Hoc Commands]({% post_url ansible/2022-06-17-ansible-ad-hoc %}) guide.
 
 ```terminal
 zolo@u22s:~$ ansible all -i 172.16.10.12, -c network_cli -u admin -k -m ios_facts -e ansible_network_os=ios
