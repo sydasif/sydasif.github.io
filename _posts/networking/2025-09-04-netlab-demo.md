@@ -42,7 +42,7 @@ python3 -m pip install networklab
 
 For reference, I am running this on an Ubuntu 24.04 desktop with 16 GB of RAM and 4 vCPUs.
 
-> If you face any issue with installation, see [Manual Virtual Machine Provisioning](https://netlab.tools/install/ubuntu-vm/#manual-virtual-machine-provisioning).
+> If you face any issue with installation, see [Manual Virtual Machine Provisioning](https://netlab.tools/install/ubuntu-vm/#manual-virtual-machine-provisioning).
 {: .prompt-tip }
 
 ## Defining a Topology
