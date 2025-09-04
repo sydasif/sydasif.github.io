@@ -17,9 +17,9 @@ tags:
 ---
 
 
-As a veteran network engineer, I have always relied on free tools for my labbing journey. I started with Packet Tracer from Cisco, then moved to GNS3 for network automation labs, which served me well for a long time. But integrating with other systems, like connecting external VMs, was not easy. EVE-NG made that part simpler, and I enjoyed using it, but it demanded heavy resources.
+As a veteran network engineer, I have always relied on free tools for my labbing journey. I started with Packet Tracer from Cisco, then moved to [GNS3](https://www.gns3.com/) for network automation labs, which served me well for a long time. But integrating with other systems, like connecting external VMs, was not easy. [EVE-NG](https://www.eve-ng.net/) made that part simpler, and I enjoyed using it, but it demanded heavy resources.
 
-These days I use Containerlab. It is lightweight, flexible, and works smoothly with Docker, so building and managing labs is much faster and less resource hungry. For automation and modern testing, it has become my main choice. Still, the real challenge in all these tools comes after the devices boot up — device provisioning. Spinning them up is easy, but preparing configs and making the devices usable always takes the most effort, to test network automation tools.
+These days I use [Containerlab](https://containerlab.dev/). It is lightweight, flexible, and works smoothly with Docker, so building and managing labs is much faster and less resource hungry. For automation and modern testing, it has become my main choice. Still, the real challenge in all these tools comes after the devices boot up — device provisioning. Spinning them up is easy, but preparing configs and making the devices usable always takes the most effort, to test network automation tools.
 
 ## Solving the Pain with _netlab_
 
@@ -29,10 +29,10 @@ These days I use Containerlab. It is lightweight, flexible, and works smoothly w
 
 In this blog, we will leverage Containerlab with the **netlab** tool, and the requirements are:
 
-* Docker
-* Containerlab
-* Container images
-* Ansible
+* [Docker](https://www.docker.com/)
+* [Containerlab](https://containerlab.dev/)
+* [Container images](https://containerlab.dev/manual/kinds/cisco_iol/)
+* [Ansible](https://docs.ansible.com/ansible/latest/index.html)
 
 To install **netlab** on an existing system that already has the low-level tools installed, use:
 
@@ -41,6 +41,9 @@ python3 -m pip install networklab
 ```
 
 For reference, I am running this on an Ubuntu 24.04 desktop with 16 GB of RAM and 4 vCPUs.
+
+> If you face any issue with installation, see [Manual Virtual Machine Provisioning](https://netlab.tools/install/ubuntu-vm/#manual-virtual-machine-provisioning).
+{: .prompt-tip }
 
 ## Defining a Topology
 
@@ -52,7 +55,7 @@ Let me share a basic topology and walk you through what will be created.
 provider: clab
 defaults:
   devices:
-    iol.clab.image: asifsyd/cisco_iol:17.12.01
+    iol.clab.image: vrnetlab/cisco_iol:17.12.01
 
 nodes:
   R1:
@@ -119,13 +122,13 @@ You are on the latest version (0.69.3)
 │       Name      │         Kind/Image         │  State  │  IPv4/6 Address │
 ├─────────────────┼────────────────────────────┼─────────┼─────────────────┤
 │ clab-demolab-R1 │ cisco_iol                  │ running │ 192.168.121.101 │
-│                 │ asifsyd/cisco_iol:17.12.01 │         │ N/A             │
+│                 │ vrnetlab/cisco_iol:17.12.01 │         │ N/A             │
 ├─────────────────┼────────────────────────────┼─────────┼─────────────────┤
 │ clab-demolab-R2 │ cisco_iol                  │ running │ 192.168.121.102 │
-│                 │ asifsyd/cisco_iol:17.12.01 │         │ N/A             │
+│                 │ vrnetlab/cisco_iol:17.12.01 │         │ N/A             │
 ├─────────────────┼────────────────────────────┼─────────┼─────────────────┤
 │ clab-demolab-R3 │ cisco_iol                  │ running │ 192.168.121.103 │
-│                 │ asifsyd/cisco_iol:17.12.01 │         │ N/A             │
+│                 │ vrnetlab/cisco_iol:17.12.01 │        │ N/A            │
 ╰─────────────────┴────────────────────────────┴─────────┴─────────────────╯
 
 ┌──────────────────────────────────────────────────────────────────────────────────┐
@@ -204,7 +207,7 @@ If you don’t want to remove everything, avoid using the --cleanup flag, as it 
 > Some command outputs have been omitted for brevity.
 {: .prompt-info }
 
-### Building a Campus-Style Demo Lab
+### Building a Campus Demo Lab
 
 Now that we have Netlab and Containerlab ready, let’s move beyond simple topologies and create something closer to a real-world enterprise network.
 
@@ -230,10 +233,10 @@ defaults:
   devices:
     iol:
       clab:
-        image: asifsyd/cisco_iol:17.12.01
+        image: vrnetlab/cisco_iol:17.12.01
     ioll2:
       clab:
-        image: asifsyd/cisco_iol:l2-17.12.01
+        image: vrnetlab/cisco_iol:l2-17.12.01
     linux:
       clab:
         image: alpine:latest
@@ -313,9 +316,33 @@ Once the file is ready, just bring up the lab with:
 netlab up
 ```
 
-Netlab will automatically generate configs for the distribution switches (using Jinja2 templates in `configs/`) and set up hosts with the right IP addresses.
+Netlab will automatically generate configuration, and merged configs for the distribution switches (using `D1.j2` and `D2.j2` templates from `configs/`) and set up hosts with the right IP addresses.
 
-You can jump into devices with:
+```ruby
+# D1.j2 Configuration
+interface Vlan10
+ vrrp 10 ip 172.16.0.254
+ vrrp 10 priority 110
+ vrrp 10 preempt
+
+interface Vlan20
+ vrrp 20 ip 172.16.1.254
+ vrrp 20 priority 100
+ vrrp 20 preempt
+
+# D2j2 Configuration
+interface Vlan10
+ vrrp 10 ip 172.16.0.254
+ vrrp 10 priority 100
+ vrrp 10 preempt
+
+interface Vlan20
+ vrrp 20 ip 172.16.1.254
+ vrrp 20 priority 110
+ vrrp 20 preempt
+```
+
+You can jump (`SSH`) into devices with:
 
 ```bash
 netlab connect D1
