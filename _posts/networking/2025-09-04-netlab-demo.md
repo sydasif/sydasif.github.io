@@ -16,7 +16,6 @@ tags:
 - build reproducible labs
 ---
 
-
 As a veteran network engineer, I have always relied on free tools for my labbing journey. I started with Packet Tracer from Cisco, then moved to [GNS3](https://www.gns3.com/) for network automation labs, which served me well for a long time. But integrating with other systems, like connecting external VMs, was not easy. [EVE-NG](https://www.eve-ng.net/) made that part simpler, and I enjoyed using it, but it demanded heavy resources.
 
 These days I use [Containerlab](https://containerlab.dev/). It is lightweight, flexible, and works smoothly with Docker, so building and managing labs is much faster and less resource hungry. For automation and modern testing, it has become my main choice. Still, the real challenge in all these tools comes after the devices boot up — device provisioning. Spinning them up is easy, but preparing configs and making the devices usable always takes the most effort, to test network automation tools.
@@ -45,7 +44,7 @@ For reference, I am running this on an Ubuntu 24.04 desktop with 16 GB of RAM an
 > If you face any issue with installation, see [Manual Virtual Machine Provisioning](https://netlab.tools/install/ubuntu-vm/#manual-virtual-machine-provisioning).
 {: .prompt-tip }
 
-## Defining a Topology
+### Defining a Topology
 
 Let me share a basic topology and walk you through what will be created.
 
@@ -207,7 +206,7 @@ If you don’t want to remove everything, avoid using the --cleanup flag, as it 
 > Some command outputs have been omitted for brevity.
 {: .prompt-info }
 
-### Building a Campus Demo Lab
+## Building a Campus Demo Lab
 
 Now that we have Netlab and Containerlab ready, let’s move beyond simple topologies and create something closer to a real-world enterprise network.
 
@@ -220,45 +219,26 @@ To demonstrate, I built a **multi-layer redundant campus lab** using Netlab. It 
 
 This gives us a design that resembles many real production networks, but completely containerized and automated with Netlab.
 
----
-
 ### Topology File
 
 Here’s the topology definition I used (`topology.yml`). Netlab will take care of building configs, assigning IP addresses, and wiring everything up:
 
 ```yaml
+---
+name: campus
 provider: clab
 
-defaults:
-  devices:
-    iol:
-      clab:
-        image: vrnetlab/cisco_iol:17.12.01
-    ioll2:
-      clab:
-        image: vrnetlab/cisco_iol:l2-17.12.01
-    linux:
-      clab:
-        image: alpine:latest
-
-module: [gateway]
-
-vlans:
-  vlan_10:
-    id: 10
-    gateway:
-      ipv4: 172.16.0.254/24
-  vlan_20:
-    id: 20
-    gateway:
-      ipv4: 172.16.1.254/24
+defaults.devices:
+  iol.clab.image: vrnetlab/cisco_iol:17.12.01
+  ioll2.clab.image: vrnetlab/cisco_iol:l2-17.12.01
+  linux.clab.image: alpine:latest
 
 nodes:
   R1:
+    device: iol
+    module: [ospf]
   D1:
-    config: [configs/D1.j2]
   D2:
-    config: [configs/D2.j2]
   S1:
   S2:
   H1:
@@ -266,16 +246,20 @@ nodes:
   H3:
   H4:
 
+vlans:
+  VLAN_10:
+    id: 10
+    links: [H1-S1, H4-S2]
+  VLAN_20:
+    id: 20
+    links: [H2-S2, H3-S1]
+
 groups:
-  CORE:
-    members: [R1]
-    device: iol
-    role: router
-    module: [ospf]
   DISTRIBUTION:
     members: [D1, D2]
     device: ioll2
     module: [vlan, ospf]
+    config: [configs]
     vlan:
       mode: irb
   ACCESS:
@@ -284,31 +268,216 @@ groups:
     module: [vlan]
     vlan:
       mode: bridge
-  hosts:
-    members: [H1, H2, H3, H4]
+  VLAN_10:
+    members: [H1, H4]
     device: linux
+    module: [routing]
     role: host
+    routing.static:
+      - ipv4: 0.0.0.0/0
+        nexthop.ipv4: 172.16.0.254
+  VLAN_20:
+    members: [H2, H3]
+    device: linux
+    module: [routing]
+    role: host
+    routing.static:
+      - ipv4: 0.0.0.0/0
+        nexthop.ipv4: 172.16.1.254
 
 links:
   - R1-D1
   - R1-D2
 
-  - group: vlan_10
-    vlan.access: vlan_10
-    members: [H1-S1, H4-S2]
-
-  - group: vlan_20
-    vlan.access: vlan_20
-    members: [H2-S2, H3-S1]
-
   - group: access_trunk
-    vlan.trunk: [vlan_10, vlan_20]
+    vlan.trunk: [VLAN_10, VLAN_20]
     members: [D1-S1, D1-S2, D2-S1, D2-S2]
 ```
 
+This YAML defines a small **campus network lab** using **netlab** and **Containerlab**. It includes a core router, two distribution switches, two access switches, and four Linux hosts placed across two VLANs. Let’s go through the file step by step.
+
 ---
 
-### Deploying the Demo
+#### 🔹 Lab Header
+
+```yaml
+name: campus
+provider: clab
+```
+
+* `name: campus` → The lab is called *campus*. This name is used for directories and container names.
+* `provider: clab` → We’re deploying it on **Containerlab**, so netlab generates a `.clab.yml` file.
+
+---
+
+#### 🔹 Default Device Images
+
+```yaml
+defaults.devices:
+  iol.clab.image: vrnetlab/cisco_iol:17.12.01
+  ioll2.clab.image: vrnetlab/cisco_iol:l2-17.12.01
+  linux.clab.image: alpine:latest
+```
+
+* Defines the **default Docker images** for each device type:
+
+  * `iol` → Cisco IOS (used for routers).
+  * `ioll2` → Cisco IOS L2 image (used for switches).
+  * `linux` → Alpine Linux image (used for hosts).
+* This way, you don’t need to repeat image info under each node.
+
+---
+
+#### 🔹 Nodes (Devices)
+
+```yaml
+nodes:
+  R1:
+    device: iol
+    module: [ospf]
+  D1:
+  D2:
+  S1:
+  S2:
+  H1:
+  H2:
+  H3:
+  H4:
+```
+
+* `R1`: Core router using Cisco IOS. OSPF is enabled.
+* `D1`, `D2`: Distribution switches (details will come from groups).
+* `S1`, `S2`: Access switches.
+* `H1–H4`: Linux hosts.
+
+By leaving most nodes blank here, we let **groups** assign common properties later.
+
+---
+
+#### 🔹 VLAN Definitions
+
+```yaml
+vlans:
+  VLAN_10:
+    id: 10
+    links: [H1-S1, H4-S2]
+  VLAN_20:
+    id: 20
+    links: [H2-S2, H3-S1]
+```
+
+* `VLAN_10` (ID 10) connects host **H1** (via S1) and **H4** (via S2).
+* `VLAN_20` (ID 20) connects host **H2** (via S2) and **H3** (via S1).
+
+This creates **end-to-end VLANs across the two access switches**.
+
+---
+
+#### 🔹 Groups (Role-Based Configs)
+
+Groups let us **assign common attributes** to multiple nodes.
+
+##### Distribution Switches
+
+```yaml
+  DISTRIBUTION:
+    members: [D1, D2]
+    device: ioll2
+    module: [vlan, ospf]
+    config: [configs]
+    vlan:
+      mode: irb
+```
+
+* Members: `D1`, `D2`.
+* Device type: `ioll2` (Cisco IOS L2).
+* Modules: VLAN + OSPF.
+* `config: [configs]` → Pulls extra config snippets from the `configs/` directory (your custom templates).
+* `vlan.mode: irb` → Switch Virtual Interfaces (SVIs) are enabled for routing between VLANs.
+
+##### Access Switches
+
+```yaml
+  ACCESS:
+    members: [S1, S2]
+    device: ioll2
+    module: [vlan]
+    vlan:
+      mode: bridge
+```
+
+* Members: `S1`, `S2`.
+* VLAN mode: *bridge only* (no routing). They act as pure Layer 2 switches.
+
+##### VLAN_10 Hosts
+
+```yaml
+  VLAN_10:
+    members: [H1, H4]
+    device: linux
+    module: [routing]
+    role: host
+    routing.static:
+      - ipv4: 0.0.0.0/0
+        nexthop.ipv4: 172.16.0.254
+```
+
+* Hosts: `H1` and `H4`.
+* Device type: `linux`.
+* Module: `routing` (so we can add static routes).
+* Role: `host`.
+* Static route: Default route points to `172.16.0.254` (gateway SVI on distribution switch).
+
+##### VLAN_20 Hosts
+
+```yaml
+  VLAN_20:
+    members: [H2, H3]
+    device: linux
+    module: [routing]
+    role: host
+    routing.static:
+      - ipv4: 0.0.0.0/0
+        nexthop.ipv4: 172.16.1.254
+```
+
+* Hosts: `H2` and `H3`.
+* Default route via `172.16.1.254`.
+
+This ensures **each host has Internet/default connectivity via its VLAN gateway**.
+
+---
+
+#### 🔹 Links (Physical Connections)
+
+```yaml
+links:
+  - R1-D1
+  - R1-D2
+```
+
+* Core router R1 connects directly to both distribution switches (D1 and D2).
+
+```yaml
+  - group: access_trunk
+    vlan.trunk: [VLAN_10, VLAN_20]
+    members: [D1-S1, D1-S2, D2-S1, D2-S2]
+```
+
+* Defines a trunk link group between distribution and access switches.
+* Carries both VLAN\_10 and VLAN\_20.
+* This builds the **classic campus topology**:
+
+  * Core <-> Distribution <-> Access <-> Hosts.
+
+---
+
+### 🚀 What Happens When You Deploy
+
+1. **R1**: Runs OSPF, connected to both D1 and D2.
+2. **D1/D2**: Distribution switches, do VLAN routing with IRB + OSPF.
+3. **S1/S2**: Access switches, bridge VLAN\_10 and VLAN\_20 traffic.
+4. **H1–H4**: Linux hosts, auto-assigned IPs in their VLANs, each with a default route toward their VLAN gateway.
 
 Once the file is ready, just bring up the lab with:
 
@@ -316,10 +485,10 @@ Once the file is ready, just bring up the lab with:
 netlab up
 ```
 
-Netlab will automatically generate configuration, and merged configs for the distribution switches (using `D1.j2` and `D2.j2` templates from `configs/`) and set up hosts with the right IP addresses.
+Netlab will automatically generate configuration, and merged configs for the distribution switches (using `D1.cfg` and `D2.cfg` templates from `configs/`) and set up hosts with the right IP addresses.
 
 ```ruby
-# D1.j2 Configuration
+# D1.cfg Configuration
 interface Vlan10
  vrrp 10 ip 172.16.0.254
  vrrp 10 priority 110
@@ -330,7 +499,7 @@ interface Vlan20
  vrrp 20 priority 100
  vrrp 20 preempt
 
-# D2j2 Configuration
+# D2.cfg Configuration
 interface Vlan10
  vrrp 10 ip 172.16.0.254
  vrrp 10 priority 100
@@ -359,7 +528,5 @@ netlab connect R1
 * **OSPF** → R1, D1, D2 should form OSPF adjacencies.
 
 That’s where Netlab comes in. Instead of manually dragging devices or repeating configs, you can define your entire lab in a simple YAML file. Netlab automatically provisions devices, assigns IPs, builds topologies, and pushes configs, saving huge amounts of time.
-
-To demonstrate this, I walked through a campus-style demo lab with a core router, redundant distribution switches running OSPF and VRRP, access switches carrying VLANs, and Linux hosts. With a single netlab up command, the full environment spins up—ready for testing inter-VLAN routing, gateway redundancy, and routing adjacencies.
 
 Whether you’re a student, a professional, or just curious about automation-driven labs, Netlab makes it easy to build and share realistic topologies in minutes.
