@@ -14,7 +14,7 @@ timezone: Asia/Karachi
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Net.Automate # the main title
+title: Networker's Blog # the main title
 
 tagline: Automate Networks with Code # it will display as the subtitle
 
@@ -138,7 +138,7 @@ pwa:
     deny_paths:
       # - "/example"  # URLs match `<SITE_URL>/example/*` will not be cached by the PWA
 
-paginate: 10
+paginate: 5
 
 # The base URL of your site
 baseurl: ""
