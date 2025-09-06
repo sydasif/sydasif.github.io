@@ -1,7 +1,7 @@
 ---
 # the default layout is 'page'
-icon: fas fa-info-circle
-order: 5
+icon: fas fa-solid fa-link
+order: 4
 ---
 
 ## Links
