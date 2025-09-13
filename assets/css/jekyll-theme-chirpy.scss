@@ -1,0 +1,19 @@
+---
+---
+
+/* prettier-ignore */
+@use 'main
+{%- if jekyll.environment == 'production' -%}
+  .bundle
+{%- endif -%}
+';
+
+/* append your custom style below */
+
+blockquote {
+  border-left: 4px solid #6c757d; /* Secondary color for blockquote border */
+  margin: 1.5em 10px; /* Spacing around the blockquote */
+  padding: 0.5em 10px; /* Padding inside the blockquote */
+  color: #6c7983; /* Slightly muted text color for blockquotes */
+  font-style: italic; /* Italicize the quoted text */
+}
