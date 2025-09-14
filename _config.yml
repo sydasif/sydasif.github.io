@@ -111,9 +111,9 @@ comments:
   provider: giscus
   giscus:
     repo: sydasif/sydasif.github.io
-    repo_id: R_kgDOPYbOcw
+    repo_id: R_kgDOPvRnxg
     category: General
-    category_id: DIC_kwDOPYbOc84Ctz6b
+    category_id: DIC_kwDOPvRnxs4CvZ7O
     mapping: pathname
     strict: 0
     reactions_enabled: 1
