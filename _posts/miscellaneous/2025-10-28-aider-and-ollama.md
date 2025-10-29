@@ -29,6 +29,7 @@ Together, they give you the **flexibility of local processing** with the **power
 ## ⚙️ Quick [Installation](https://aider.chat/docs/install.html#installation) Guide
 
 ### Install Aider
+
 ```bash
 python -m pip install aider-install
 aider-install
@@ -49,6 +50,8 @@ ollama pull qwen2.5-coder        # Local model
 ollama pull qwen3-coder:480b-cloud  # Cloud model
 ```
 
+> During setup of Ollama Cloud models, if you get any error, see: <https://ollama.com/blog/cloud-models>
+
 ### Set Ollama API
 
 ```bash
@@ -59,7 +62,7 @@ setx   OLLAMA_API_BASE http://127.0.0.1:11434 # Windows, restart shell after set
 ### Run Aider with Cloud Model
 
 ```bash
-aider --model ollama_chat/qwen3-coder:480b-cloud
+aider --model ollama_chat/qwen3-coder:480b-cloud  # Use ollama_chat instead of ollama
 ```
 
 ---
@@ -96,6 +99,7 @@ These make Aider a smart, terminal-based coding companion.
 * Use **local AI models** for sensitive or offline work.
 * Use **cloud models** for large scripts or complex logic.
 * Be specific in prompts — clear instructions yield cleaner code.
+* Set up a bash alias for different models
 
 ---
 
