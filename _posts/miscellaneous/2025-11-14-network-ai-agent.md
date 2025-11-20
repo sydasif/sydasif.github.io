@@ -1,224 +1,323 @@
 ---
-title: "Building an AI Agent for Network Automation: Talk to Your Router Like a Human"
+title: "Building Network Automation Agent: Talk to Your Router Like a Human"
 date: 2025-11-14 13:00:00 +0500
 categories: miscellaneous
 tags:
   - langchain
   - groq
-  - ai-coding
   - python
   - devops
+  - nemiko
 ---
 
-A Python application that lets you talk to Cisco routers in plain English. Instead of memorizing commands and parsing outputs, you ask questions naturally:
-
-- "Show me all interfaces and their status"
-- "What's the device uptime?"
-- "Are there any errors?"
-
-The AI figures out which commands to run, executes them, and gives you clear answers.
+This guide explains how to build a simple AI agent that understands plain language and runs network commands for you. It uses LangGraph for workflow control and Netmiko for device access. All code blocks stay the same as before.
 
 ---
 
-## Technology Stack
+## Introduction
 
-**Three core components:**
+Managing networks usually means opening many SSH sessions and typing long commands. It can take time and lead to mistakes. What if you could just type:
 
-1. **Netmiko** - SSH connection to network devices
-2. **LangChain** - AI application framework
-3. **Groq** - Fast, free AI inference (Llama 3.3)
+**“Show VLANs on switch‑1”** and the ai agent handles everything?
+
+With LLMs, this is now possible. By combining a language model with a workflow and a device‑access tool, you can build an agent that understands what you want and runs the correct command.
+
+In this guide, you will learn:
+
+* How the agent works
+* How to set up the project
+* How the workflow processes user messages
+* How commands run on real network devices
 
 ---
 
-## Prerequisites
+## Section 1: Understanding the Agent Design
+
+The agent works like this:
+
+1. It reads your message and figures out your request.
+2. It checks if a command needs to run.
+3. It connects to the device.
+4. It returns an easy‑to‑read answer.
+
+LangGraph is used to build a small state machine with three parts:
+
+* **Understand**: detects intent and devices
+* **Execute**: runs the network command
+* **Respond**: creates the final reply
+
+```
++-----------------+      +-----------------+      +-----------------+
+|   Understand    +---->     Execute     +---->     Respond        |
++-----------------+      +-----------------+      +-----------------+
+```
+
+### State Machine Code
+
+```python
+"""Defines the state graph for the network automation agent."""
+
+from typing import TypedDict, List, Any
+
+from langgraph.graph import END, StateGraph
+from langchain_core.messages import BaseMessage
+
+from graph.nodes import execute_node, respond_node, understand_node
+
+
+class State(TypedDict):
+    """Defines the state structure for the LangGraph workflow."""
+    messages: List[BaseMessage]
+    results: dict[str, Any]
+
+
+def create_graph():
+    """Creates and configures the LangGraph workflow for the network agent."""
+    workflow = StateGraph(State)
+
+    workflow.add_node("understand", understand_node)
+    workflow.add_node("execute", execute_node)
+    workflow.add_node("respond", respond_node)
+
+    workflow.set_entry_point("understand")
+    # Conditional edge from 'understand' node: if the LLM generated tool calls,
+    # route to 'execute' node; otherwise, route directly to 'respond' node
+    workflow.add_conditional_edges(
+        "understand",
+        lambda s: "execute"
+        if hasattr(s["messages"][-1], "tool_calls") and s["messages"][-1].tool_calls
+        else "respond",
+        {"execute": "execute", "respond": END},
+    )
+    workflow.add_edge("execute", "respond")
+    workflow.add_edge("respond", END)
+
+    return workflow.compile()
+```
+
+---
+
+## Section 2: Setting Up the Project
+
+A common use case is checking version, uptime, or status of devices without logging into each one. Follow these steps to set up the project.
+
+### Step 1: Clone the Repo
 
 ```bash
-# Python 3.12 or higher
-# Install uv package manager
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Get free Groq API key
-# Visit: https://console.groq.com/keys
+git clone https://github.com/sydasif/network-automation-agent.git
+cd network-agent
 ```
 
----
-
-## Project Setup
-
-### 1. Create Project Directory
-
-```bash
-mkdir network-ai-agent
-cd network-ai-agent
-```
-
-### 2. Create `pyproject.toml`
-
-```toml
-[project]
-name = "network-agent"
-version = "0.1.0"
-requires-python = ">=3.12"
-dependencies = [
-    "groq>=0.33.0",
-    "langchain-groq>=1.0.0",
-    "langgraph>=1.0.3",
-    "netmiko>=4.6.0",
-    "python-dotenv>=1.2.1",
-]
-```
-
-### 3. Create `.env` File
-
-```bash
-GROQ_API_KEY=your_groq_api_key_here
-DEVICE_PASSWORD=your_device_password  # Optional
-```
-
-### 4. Install Dependencies
+### Step 2: Install Dependencies
 
 ```bash
 uv sync
 ```
 
+### Step 3: Add Environment Variables
+
+```bash
+cp .env.example .env
+```
+
+Add your Groq API key inside the `.env` file.
+
+### Step 4: Add Your Devices
+
+```yaml
+# Network device inventory
+devices:
+  - name: s1
+    host: 192.168.121.101
+    username: admin
+    password: admin
+    device_type: cisco_ios
+  - name: s2
+    host: 192.168.121.102
+    username: admin
+    password: admin
+    device_type: cisco_ios
+```
+
 ---
 
-## The Complete Code
+## Section 3: How the "Understand" Node Works
 
-Create `main.py`:
+This part reads the user message and decides if a device command should run. It also knows the device names so it can check if the user is referring to a valid device.
 
 ```python
-"""
-AI Agent for Network Devices
-Talk to your Cisco router using natural language
-"""
+"""Defines the node functions for the network automation agent workflow."""
 
-import os
-import getpass
-from dotenv import load_dotenv
-from netmiko import ConnectHandler
-from langchain_groq import ChatGroq
-from langchain_core.tools import tool
-from langgraph.prebuilt import create_react_agent
+from typing import List, Any, TypedDict
+
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, BaseMessage, ToolMessage
+
+from llm.setup import create_llm
+from tools.run_command import run_command
+from utils.devices import load_devices
+
+llm = create_llm()
+llm_with_tools = llm.bind_tools([run_command])
 
 
-class NetworkAgent:
-    """AI-powered network device assistant."""
+# Cache for device names to avoid repeated loading in understand_node
+_CACHED_DEVICE_NAMES: list[str] | None = None
 
-    def __init__(self, groq_api_key: str):
-        """Initialize the AI agent."""
-        # Set up the AI model
-        self.llm = ChatGroq(
-            groq_api_key=groq_api_key,
-            model_name="llama-3.3-70b-versatile",
-            temperature=0.7
+
+def clear_device_cache():
+    """Clear the cached device names to force reloading from configuration."""
+    global _CACHED_DEVICE_NAMES
+    _CACHED_DEVICE_NAMES = None
+
+
+def understand_node(state: dict[str, Any]) -> dict[str, Any]:
+    """Processes user input and determines if network commands need to be executed."""
+    global _CACHED_DEVICE_NAMES
+
+    messages: list[BaseMessage] = state.get("messages", [])
+
+    # Use cached device names if available, otherwise load and cache them
+    if _CACHED_DEVICE_NAMES is None:
+        devices = load_devices()  # This will use the cached version from utils/devices
+        _CACHED_DEVICE_NAMES = list(devices.keys())
+
+    system_msg = SystemMessage(
+        content=(
+            "You are a network automation assistant.\n"
+            f"Available devices: {', '.join(_CACHED_DEVICE_NAMES)}\n"
+            "If user asks to run show commands, call run_command tool."
         )
-        self.connection = None
+    )
 
-        # Create a tool the AI can use to run commands
-        self.execute_command_tool = tool("execute_show_command")(
-            self._execute_command
+    full_messages = [system_msg]
+    for m in messages:
+        if isinstance(m, str):
+            full_messages.append(HumanMessage(content=m))
+        else:
+            full_messages.append(m)
+
+    response = llm_with_tools.invoke(full_messages)
+
+    return {"messages": messages + [response], "results": state.get("results", {})}
+```
+
+---
+
+## Section 4: How the "Execute" Node Works
+
+This part connects to the device using Netmiko and runs the command. It also tries structured output first and falls back to raw output if needed.
+
+```python
+def should_execute_tools(state: dict[str, Any]) -> str:
+    """Determines if the workflow should execute tools or respond directly."""
+    last = state["messages"][-1]
+    if hasattr(last, "tool_calls") and last.tool_calls:
+        return "execute"
+    return "respond"
+
+
+def execute_node(state: dict[str, Any]) -> dict[str, Any]:
+    """Executes network commands on specified devices based on tool calls."""
+    messages = state["messages"]
+    last = messages[-1]
+
+    tool_results = []
+    if hasattr(last, "tool_calls"):
+        for tool_call in last.tool_calls:
+            if tool_call["name"] == "run_command":
+                # tool_call["args"] is the dict of arguments the tool expects
+                result = run_command.invoke(tool_call["args"])
+                tool_results.append({"tool_call_id": tool_call["id"], "output": result})
+
+    # Create ToolMessage objects to pass results back to the LLM
+    # Pre-allocate list with known size to avoid dynamic resizing
+    tool_messages = []
+    tool_messages_append = tool_messages.append  # Cache the append method
+    for tr in tool_results:
+        tool_messages_append(
+            ToolMessage(content=str(tr["output"]), tool_call_id=tr["tool_call_id"])
         )
 
-        # Create the AI agent with the tool
-        self.agent = create_react_agent(self.llm, [self.execute_command_tool])
+    return {"messages": messages + tool_messages, "results": state.get("results", {})}
+```
 
-    def connect(self, hostname: str, username: str, password: str):
-        """Connect to a network device."""
-        device_config = {
-            'device_type': 'cisco_ios',
-            'host': hostname,
-            'username': username,
-            'password': password,
-            'timeout': 30,
-        }
-        self.connection = ConnectHandler(**device_config)
-        print(f"✓ Connected to {hostname}")
+The final part of the workflow is the "respond" node, which formats and returns the final response to the user:
 
-    def disconnect(self):
-        """Disconnect from the device."""
-        if self.connection:
-            self.connection.disconnect()
-            print("✓ Disconnected")
+```python
+def respond_node(state: dict[str, Any]) -> dict[str, Any]:
+    """Formats and returns the final response to the user."""
+    messages = state["messages"]
+    last = messages[-1]
 
-    def _execute_command(self, command: str) -> str:
-        """Execute a command on the device (used by AI)."""
-        if not self.connection:
-            return "Error: Not connected to device"
+    if isinstance(last, AIMessage) and not hasattr(last, "tool_calls"):
+        return state
 
-        try:
-            output = self.connection.send_command(command)
-            return output
-        except Exception as e:
-            return f"Error: {str(e)}"
+    synthesis_prompt = SystemMessage(
+        content=(
+            "Analyze the command results and provide a concise summary. "
+            "If structured, prefer tables. If raw, extract key lines."
+        )
+    )
 
-    def ask(self, question: str) -> str:
-        """Ask the AI a question about the device."""
-        # Give the AI instructions
-        prompt = f"""You are a network engineer assistant.
-Use the execute_show_command tool to run Cisco commands.
-Answer the user's question clearly and concisely.
+    response = llm.invoke(messages + [synthesis_prompt])
 
-User question: {question}"""
+    return {"messages": messages + [response], "results": state.get("results", {})}
+```
 
-        try:
-            result = self.agent.invoke({"messages": [("user", prompt)]})
+---
 
-            # Extract the AI's response
-            last_message = result["messages"][-1]
-            return last_message.content
-        except Exception as e:
-            return f"Error: {str(e)}"
+## Section 5: Full Working Example
+
+The main script below starts the agent, receives input, and prints the agent's answer.
+
+```python
+"""Main entry point for the Network AI Agent."""
+
+from typing import Any
+
+from langchain_core.messages import AIMessage, BaseMessage
+
+from graph.router import create_graph, State
 
 
 def main():
-    """Main program."""
-    load_dotenv()
+    """Initialize and run the Network AI Agent in interactive mode."""
+    app = create_graph()
 
-    print("="*60)
-    print("AI Network Agent")
-    print("="*60)
+    print("🤖 Network AI Agent Ready!")
+    print("Type 'quit' to exit.\n")
 
-    # Get connection details
-    hostname = input("\nDevice IP: ").strip()
-    username = input("Username: ").strip()
-    password = os.getenv('DEVICE_PASSWORD') or getpass.getpass("Password: ")
+    conversation_history: list[BaseMessage] = []
 
-    # Get API key
-    api_key = os.getenv('GROQ_API_KEY')
-    if not api_key:
-        print("Error: Set GROQ_API_KEY in .env file")
-        return
-
-    # Create and connect agent
-    agent = NetworkAgent(api_key)
-
-    try:
-        agent.connect(hostname, username, password)
-
-        print("\n" + "="*60)
-        print("Ready! Type 'quit' to exit")
-        print("="*60 + "\n")
-
-        # Chat loop
-        while True:
-            question = input("\n💬 Ask: ").strip()
-
-            if question.lower() in ['quit', 'exit']:
+    while True:
+        try:
+            user_input = input("You: ").strip()
+            if user_input.lower() in ["quit", "exit", "q"]:
+                print("Goodbye!")
                 break
 
-            if not question:
+            if not user_input:
                 continue
 
-            print("\n" + "-"*60)
-            answer = agent.ask(question)
-            print(answer)
-            print("-"*60)
+            conversation_history.append(user_input)
 
-    except Exception as e:
-        print(f"Error: {e}")
-    finally:
-        agent.disconnect()
+            result = app.invoke({"messages": conversation_history, "results": {}})
+
+            final_message = result["messages"][-1]
+            if isinstance(final_message, AIMessage):
+                response_text = final_message.content
+            else:
+                response_text = str(final_message)
+
+            print(f"\n🤖 Agent: {response_text}\n")
+
+            conversation_history = result["messages"]  # type: ignore
+
+        except KeyboardInterrupt:
+            print("\nGoodbye!")
+            break
+        except Exception as e:
+            print(f"Error: {e}")
 
 
 if __name__ == "__main__":
@@ -227,407 +326,142 @@ if __name__ == "__main__":
 
 ---
 
-## How It Works: Code Breakdown
+## Section 6: Network Command Tool
 
-### 1. Imports and Setup
+The agent uses a specialized tool for executing commands on network devices. Here's the implementation:
 
 ```python
-import os
-import getpass
-from dotenv import load_dotenv
-from netmiko import ConnectHandler
-from langchain_groq import ChatGroq
+"""Network command execution tool for the network automation agent."""
+
+import json
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import List, Union, Dict, Any
+
 from langchain_core.tools import tool
-from langgraph.prebuilt import create_react_agent
+from netmiko import ConnectHandler
+from netmiko.exceptions import NetmikoAuthenticationException, NetmikoTimeoutException
+
+from utils.devices import load_devices, DeviceConfig
+
+
+@tool
+def run_command(device: str | list[str], command: str) -> str:
+    """Execute a command on one or more network devices."""
+    all_devices = load_devices()
+
+    if isinstance(device, str):
+        device_list = [device]
+    else:
+        device_list = device
+
+    # Cache the available devices list to avoid repeated calls to .keys()
+    available_devices = list(all_devices.keys())
+
+    # Validate that all requested devices exist
+    for dev in device_list:
+        if dev not in all_devices:
+            return json.dumps({
+                "error": f"Device '{dev}' not found",
+                "available_devices": available_devices,
+            })
+
+    results = {}
+
+    def execute_on_device(dev_name: str) -> tuple[str, Dict[str, Any]]:
+        """Helper function to execute a command on a single device."""
+        cfg: DeviceConfig = all_devices[dev_name]
+        try:
+            # Establish SSH connection to the device
+            conn = ConnectHandler(
+                device_type=cfg["device_type"],
+                host=cfg["host"],
+                username=cfg["username"],
+                password=cfg["password"],
+                timeout=30,
+            )
+
+            try:
+                # Attempt to execute command with textfsm parsing for structured output
+                out = conn.send_command(command, use_textfsm=True)
+                if isinstance(out, str):
+                    # If output is a string, it means textfsm parsing failed or wasn't applicable
+                    parsed_type = "raw"
+                    parsed_output = out
+                else:
+                    # If output is not a string (typically a list of dicts), textfsm parsing worked
+                    parsed_type = "structured"
+                    parsed_output = out
+            except Exception:
+                # If textfsm parsing fails, execute command without parsing
+                out = conn.send_command(command)
+                parsed_type = "raw"
+                parsed_output = out
+
+            # Close the SSH connection
+            conn.disconnect()
+
+            return dev_name, {
+                "success": True,
+                "type": parsed_type,  # Indicates whether output is structured or raw
+                "data": parsed_output,
+            }
+
+        except NetmikoAuthenticationException as e:
+            # Handle authentication-specific errors
+            return dev_name, {"success": False, "error": f"Authentication failed: {str(e)}"}
+        except NetmikoTimeoutException as e:
+            # Handle timeout-specific errors
+            return dev_name, {"success": False, "error": f"Connection timeout: {str(e)}"}
+        except Exception as e:
+            # Return error information if connection or command execution fails
+            return dev_name, {"success": False, "error": f"Connection error: {str(e)}"}
+
+    # Execute commands in parallel across multiple devices using ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=min(len(device_list), 10)) as ex:
+        # Submit tasks for each device to the thread pool
+        futures = {ex.submit(execute_on_device, d): d for d in device_list}
+        # Process completed tasks as they finish
+        for fut in as_completed(futures):
+            dev, out = fut.result()
+            results[dev] = out
+
+    return json.dumps({"command": command, "devices": results}, indent=2)
 ```
 
-**What each does:**
-
-- `os`, `getpass` - Read environment variables and secure password input
-- `load_dotenv` - Load API keys from `.env` file
-- `ConnectHandler` - Create SSH sessions with Cisco devices
-- `ChatGroq` - Connect to Llama 3.3 on Groq's platform
-- `tool` - Expose Python functions to the AI
-- `create_react_agent` - Build an agent that can plan and execute actions
-
-### 2. The NetworkAgent Class
-
-**Constructor (`__init__`)**
-
-```python
-self.llm = ChatGroq(
-    groq_api_key=groq_api_key,
-    model_name="llama-3.3-70b-versatile",
-    temperature=0.7
-)
-```
-
-Creates the AI model connection. Temperature 0.7 balances creativity with consistency.
-
-```python
-self.execute_command_tool = tool("execute_show_command")(self._execute_command)
-```
-
-Wraps the `_execute_command` method as a tool the AI can call.
-
-```python
-self.agent = create_react_agent(self.llm, [self.execute_command_tool])
-```
-
-Creates an agent that can:
-
-- Reason about questions
-- Decide when to use tools
-- Analyze command outputs
-- Generate answers
-
-### 3. Connection Management
-
-**`connect()` method:**
-
-```python
-device_config = {
-    'device_type': 'cisco_ios',
-    'host': hostname,
-    'username': username,
-    'password': password,
-    'timeout': 30,
-}
-self.connection = ConnectHandler(**device_config)
-```
-
-Builds SSH configuration and opens a live session stored in `self.connection`.
-
-**`disconnect()` method:**
-
-```python
-if self.connection:
-    self.connection.disconnect()
-```
-
-Cleanly closes the SSH session to prevent stuck connections.
-
-### 4. The Command Execution Tool
-
-```python
-def _execute_command(self, command: str) -> str:
-    output = self.connection.send_command(command)
-    return output
-```
-
-This is the bridge between AI and device. When the AI needs information:
-
-- Runs the CLI command through Netmiko
-- Returns raw output
-- The agent analyzes this output to form a reply
-
-### 5. The Question Handler
-
-```python
-def ask(self, question: str) -> str:
-    prompt = f"""You are a network engineer assistant.
-Use the execute_show_command tool to run Cisco commands.
-Answer the user's question clearly and concisely.
-
-User question: {question}"""
-```
-
-Constructs a prompt that:
-
-- Instructs the AI to use the tool
-- Encourages clear, concise replies
-- Includes the user's question
-
-```python
-result = self.agent.invoke({"messages": [("user", prompt)]})
-last_message = result["messages"][-1]
-return last_message.content
-```
-
-The agent flow:
-
-1. Reads your question
-2. Plans which command to run
-3. Calls `_execute_command` tool
-4. Analyzes CLI output
-5. Returns final answer
-
-### 6. The Main Function
-
-**Load environment:**
-
-```python
-load_dotenv()
-```
-
-Loads `GROQ_API_KEY` and optional `DEVICE_PASSWORD`.
-
-**Get credentials:**
-
-```python
-hostname = input("Device IP: ").strip()
-username = input("Username: ").strip()
-password = os.getenv('DEVICE_PASSWORD') or getpass.getpass("Password: ")
-```
-
-Pulls password from `.env` or prompts securely.
-
-**Chat loop:**
-
-```python
-while True:
-    question = input("\n💬 Ask: ").strip()
-    if question.lower() in ['quit', 'exit']:
-        break
-    answer = agent.ask(question)
-    print(answer)
-```
-
-Continuously processes questions until user types "quit".
-
-**Cleanup:**
-
-```python
-finally:
-    agent.disconnect()
-```
-
-Always closes connection, even on errors.
-
----
-
-## The Complete Flow
-
-```
-User: "Show me all interfaces"
-  ↓
-AI Agent receives question
-  ↓
-AI thinks: "I need 'show ip interface brief'"
-  ↓
-AI calls: execute_show_command("show ip interface brief")
-  ↓
-Netmiko runs command via SSH
-  ↓
-Device returns CLI output
-  ↓
-AI analyzes output
-  ↓
-AI responds: "Here are your interfaces..."
-```
-
----
-
-## Running Your Agent
+Run the script:
 
 ```bash
 uv run main.py
 ```
 
-**Example session:**
+---
 
-```
-Device IP: 192.168.1.1
-Username: admin
-Password: ****
-✓ Connected to 192.168.1.1
+## Section 7: Comparing With Other Methods
 
-Ready! Type 'quit' to exit
-
-💬 Ask: Show me all interfaces
-
-------------------------------------
-I found 4 interfaces on your device:
-1. GigabitEthernet0/0 - UP (192.168.1.1)
-2. GigabitEthernet0/1 - UP (10.1.0.1)
-3. GigabitEthernet0/2 - DOWN
-4. Loopback0 - UP (10.0.0.1)
-------------------------------------
-
-💬 Ask: What's the uptime?
-
-------------------------------------
-The device has been running for 2 days, 4 hours, 30 minutes.
-------------------------------------
-
-💬 Ask: quit
-✓ Disconnected
-```
+| Method         | Pros                            | Cons                        | Best Use Case                       |
+| -------------- | ------------------------------- | --------------------------- | ----------------------------------- |
+| AI Agent       | Simple to use, natural language | Needs an LLM                | Quick checks, helping new engineers |
+| Ansible/Nornir | Strong for config changes       | Requires YAML or Python     | Large changes across many devices   |
+| Manual CLI     | Total control                   | Time‑consuming, error‑prone | One‑off checks                      |
 
 ---
 
-## Example Queries
+## Section 8: Common Issues
 
-**Basic Information:**
+**GROQ_API_KEY missing**
 
-- "What version is running?"
-- "What's the hostname?"
-- "Show me the uptime"
+* Add it inside `.env`.
 
-**Interface Management:**
+**Device not found**
 
-- "List all interfaces"
-- "Which interfaces are down?"
-- "Show me interface errors"
-- "What's the status of GigabitEthernet0/1?"
+* Check the device name in `hosts.yaml`.
 
-**Routing:**
+**Auth or timeout errors**
 
-- "Show me the routing table"
-- "What's the default gateway?"
-- "Show me all static routes"
-
-**Troubleshooting:**
-
-- "Are there any errors in the logs?"
-- "Show me interface errors"
-- "Is there any packet loss?"
-
----
-
-## Traditional vs AI Approach
-
-### Traditional Way
-
-```
-You: show ip interface brief
-Device: [50 lines of output]
-You: [manually read through output]
-You: show interfaces status
-Device: [more output]
-You: [correlate information mentally]
-```
-
-### AI Agent Way
-
-```
-You: "Which interfaces have errors?"
-AI: [runs multiple commands automatically]
-AI: [analyzes all output]
-AI: "Interface GigabitEthernet0/2 has 45 input errors"
-```
-
----
-
-## Security Best Practices
-
-🔒 **Critical security considerations:**
-
-1. **Never hardcode passwords** - Use environment variables or secure input
-2. **Use SSH keys** when possible instead of passwords
-3. **Secure API keys** - Store in `.env`, never commit to version control
-4. **Read-only commands** - This example only runs `show` commands
-5. **Network segmentation** - Run from secure management network
-6. **Audit logging** - Track which commands are executed
-
----
-
-## Troubleshooting
-
-### "Connection timeout"
-
-- Verify device IP is reachable
-- Check SSH is enabled on device
-- Confirm firewall rules allow SSH
-- Test with manual SSH first
-
-### "Authentication failed"
-
-- Verify username and password
-- Check if enable password is required
-- Confirm privilege level is sufficient
-
-### "API rate limit"
-
-- Groq free tier: 30 requests/minute
-- Wait between queries
-- Consider paid tier for production use
-
-### "Command not recognized"
-
-- Commands differ by platform (IOS vs NX-OS vs IOS-XR)
-- Try the direct command manually first
-- Check device capabilities
-
----
-
-## Architecture Overview
-
-```
-┌─────────────┐
-│    User     │
-│   (Human)   │
-└──────┬──────┘
-       │ "Show me interfaces"
-       ↓
-┌─────────────┐
-│  AI Agent   │ ← Thinks & Plans
-│  (Llama)    │ ← LangGraph orchestration
-└──────┬──────┘
-       │ execute_show_command()
-       ↓
-┌─────────────┐
-│  Netmiko    │ ← SSH Connection
-│  (Python)   │
-└──────┬──────┘
-       │ CLI Commands
-       ↓
-┌─────────────┐
-│   Router    │
-│  (Cisco)    │
-└─────────────┘
-```
-
----
-
-## Enhancement Ideas
-
-Ready to take it further? Consider:
-
-1. **Multi-platform support** - Add NX-OS, IOS-XR, ASA
-2. **Configuration changes** - Add tools for config commands (with safety checks)
-3. **Multi-device queries** - Connect to multiple devices simultaneously
-4. **Web interface** - Build a Flask/FastAPI web UI
-5. **Scheduled checks** - Automated health monitoring
-6. **Alerting system** - Notifications for critical issues
-7. **Conversation memory** - Remember context across questions
-8. **Command history** - Log all executed commands
-9. **Output caching** - Cache recent command outputs
-
----
-
-## Why This Matters
-
-**100 lines of Python** gives you an agent that:
-
-- Understands natural language
-- Executes network commands intelligently
-- Analyzes device output
-- Responds with clear answers
-- Eliminates command memorization
-- Reduces parsing time
-
-This is network automation meeting AI. No more CLI reference guides, no more manual output parsing - just ask and receive answers.
-
----
-
-## Quick Start Checklist
-
-- [ ] Install Python 3.12+
-- [ ] Install uv package manager
-- [ ] Get Groq API key from <https://console.groq.com>
-- [ ] Create project directory
-- [ ] Copy `pyproject.toml`
-- [ ] Create `.env` with API key
-- [ ] Copy `main.py`
-- [ ] Run `uv sync`
-- [ ] Run `uv run main.py`
-- [ ] Start chatting with your devices
+* Check credentials and reachability.
 
 ---
 
 ## Conclusion
 
-You now have a working AI network agent. The combination of LangChain's agent framework, Groq's fast inference, and Netmiko's device connectivity creates a powerful tool for network operations. Customize it for your environment, add more tools, and watch your network management transform.
-
-Happy automating! 🚀🤖
+You now have a simple, working setup for a conversational network automation agent. This approach lets you manage devices using plain language instead of writing scripts. You can extend this agent by adding more tools, device types, or custom checks.
